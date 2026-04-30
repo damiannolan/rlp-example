@@ -30,13 +30,13 @@ func Encode(data []byte) []byte {
 	lenBz := make([]byte, 8)
 	binary.BigEndian.PutUint64(lenBz, uint64(length))
 
-	var trimmedLen []byte
-	for _, b := range lenBz {
-		// Trim leading zeros from the length bytes
-		if b != 0 || len(trimmedLen) > 0 {
-			trimmedLen = append(trimmedLen, b)
-		}
+	i := 0
+	for i < len(lenBz) && lenBz[i] == 0 {
+		i++
 	}
+
+	// Trim leading zeros from the length bytes
+	trimmedLen := lenBz[i:]
 
 	prefix := byte(0xb7 + len(trimmedLen))
 	res := append([]byte{prefix}, trimmedLen...)
